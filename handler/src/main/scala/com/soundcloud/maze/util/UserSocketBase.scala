@@ -8,28 +8,32 @@ import akka.io.Tcp.Write
 import akka.util.{ByteString, Timeout}
 
 import com.soundcloud.maze.config.MazeConfig
+import com.soundcloud.maze.registry.ActiveUsersRegistry
 
 trait UserSocketBase extends Actor with ActorLogging {
 
   protected val connection  : ActorRef
-
-  private val users = new ConcurrentHashMap[String,ActorRef]()
   implicit val timeout = Timeout(MazeConfig.socketsTimeout)
 
   protected def eventHandler : Receive
   private def socketMessageHandler : Receive = {
     case Tcp.Received(data) =>
-      val eventsStr = data.utf8String
-      val event  = EventParser.parse(eventsStr)
+      val userStr = data.filter(_.toInt != 10).utf8String //removing '\n' from the data
+      val user    = UserParser.parse(userStr)
+
+      ActiveUsersRegistry.findById(user.username) match {
+        case Some(_) =>
+        case None    =>
+          ActiveUsersRegistry.add(user.username, self)
+      }
 
 
     case _ : Tcp.ConnectionClosed =>
-      log.info("Connection [Event-Socket-Message-Handler] closed")
+      log.info("Connection [User-Socket-Message-Handler] closed")
       context stop self
   }
 
-  /**
-    * These methods are helper methods, if we may want to write to the Event TCP connection*/
+
   protected def sendMsg(msg : String) = {
     log.info(s"Writing to Connection message $msg")
     //This method can be enhanced if the message may be modified

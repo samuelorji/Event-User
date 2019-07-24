@@ -14,18 +14,18 @@ private[util] trait EventParserT {
         eventParts(1) match {
 
           case "F" =>
-            Follow(eventParts(2), eventParts(3))
+            Follow(eventParts(2), eventParts(3),event)
           case "B" =>
             Broadcast
 
           case "U" =>
-            UnFollow(eventParts(2), eventParts(3))
+            UnFollow(eventParts(2), eventParts(3),event)
 
           case "P" =>
-            PrivateMessage(eventParts(2), eventParts(3))
+            PrivateMessage(eventParts(2), eventParts(3),event)
 
           case "S" =>
-            StatusUpdate(eventParts(2))
+            StatusUpdate(eventParts(2),event)
 
 
           case _ => InvalidEvent
@@ -39,10 +39,9 @@ private[util] trait EventParserT {
 
 }
 
+object UserParser extends UserParserT
 private[util] trait UserParserT{
-
   def parse(msg : String) : User ={
-
-    User("hello")
+    User(msg)
   }
 }
