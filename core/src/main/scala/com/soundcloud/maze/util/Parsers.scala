@@ -16,7 +16,7 @@ private[util] trait EventParserT {
           case "F" =>
             Follow(eventParts(2), eventParts(3),event)
           case "B" =>
-            Broadcast
+            Broadcast(event)
 
           case "U" =>
             UnFollow(eventParts(2), eventParts(3),event)

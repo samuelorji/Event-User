@@ -1,7 +1,9 @@
 package com.soundcloud.maze.socket
 
-import akka.actor.{ Actor, ActorLogging }
+import akka.actor.{Actor, ActorLogging}
 import akka.io.Tcp
+
+import com.soundcloud.maze.outbound.{EventSocketHandler, EventUserPipe}
 
 
 class EventSocketService extends Actor with ActorLogging{
@@ -11,14 +13,11 @@ class EventSocketService extends Actor with ActorLogging{
       context stop self
 
     case Tcp.Connected(remote, local) =>
-      log.info(s"Tcp.Connected Service has been connected [$remote]. Creating a new handler")
-      println(s"Tcp.Connected Service has been connected [$remote]. Creating a new handler")
       val connection = sender
-//      val handler    = context.actorOf(FSInboundEventSocket.props(
-//        connection,
-//        InboundCallEventHandlerProps
-//      ))
-//      connection ! Tcp.Register(handler)
+      val handler    = context.actorOf(EventSocketHandler.props(
+        connection
+      ))
+      connection ! Tcp.Register(handler)
   }
 
 }

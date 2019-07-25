@@ -12,8 +12,7 @@ class UserSocketService extends Actor with ActorLogging {
       context stop self
 
     case Tcp.Connected(remote, _) =>
-      log.info(s"Tcp.Connected Service has been connected [$remote]. Creating a new handler")
-      println(s"Tcp.Connected Service has been connected [$remote]. Creating a new handler")
+      //log.info(s"Tcp.Connected Service has been connected [$remote]. Creating a new handler")
       val connection = sender
       val handler    = context.actorOf(UserInbound.props(
         connection

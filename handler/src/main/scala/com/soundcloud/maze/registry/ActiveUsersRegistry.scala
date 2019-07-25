@@ -12,15 +12,15 @@ object ActiveUsersRegistry {
 
 
   def add(id : String, ref : ActorRef) : Option[ActorRef] = {
-    if(usersActorMap.size() > 50) println(usersActorMap.values().asScala.mkString("**"))
-
     usersActorMap.put(id,ref) match {
       case null => None
       case x    => Some(x)
     }
-
-
   }
+
+  def getAllValues : List[ActorRef] = usersActorMap.values().asScala.toList
+
+  def getAllKeys : List[String]  = usersActorMap.keys().asScala.toList
 
   def findById(id : String) : Option[ActorRef] = {
     usersActorMap.get(id) match {
