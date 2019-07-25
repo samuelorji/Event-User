@@ -25,10 +25,6 @@ private[outbound] class EventUserPipe extends Actor with ActorLogging {
     case StartDispatch =>
      // println(ActiveUsersRegistry.getAllKeys.mkString("*"))
       println(s"length of Active all registered is  ${ActiveUsersRegistry.getAllKeys.length}")
-     val printer=  new PrintWriter(new File("/var/tmp/log/maze/events.log"))
-      printer.write(events.toList.mkString("\n"))
-      printer.flush()
-      printer.close()
       ActiveUsersRegistry.getAllValues.foreach(_ ! UserInbound.StartDispatch)
     case req : Events =>
       //events.append(req.events : _*)
@@ -78,19 +74,19 @@ private[outbound] class EventUserPipe extends Actor with ActorLogging {
       case (map1,event) =>
         event match {
 
-          case f@Follow(_, to, _) =>
+          case f@Follow(_,_, to, _) =>
             map1.updated(to,map1.getOrElse(to,Nil) :+ f)
 
-          case u@UnFollow(_, to, _) =>
+          case u@UnFollow(_,_, to, _) =>
             map1.updated(to,map1.getOrElse(to,Nil) :+ u)
 
-          case b@Broadcast(_) =>
+          case b@Broadcast(_,_) =>
             map1.map(x => x._1 ->  x._2.:+(b))
 
-          case p@PrivateMessage(_, to, _) =>
+          case p@PrivateMessage(_,_, to, _) =>
             map1.updated(to,map1.getOrElse(to,Nil) :+ p)
 
-          case s@StatusUpdate(from, _) =>
+          case s@StatusUpdate(_,from, _) =>
             map1.updated(from,map1.getOrElse(from,Nil) :+ s)
 
         }

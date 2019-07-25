@@ -41,11 +41,11 @@ class UserInbound (
       val events = eventsStore.toList
 
       val eventsOrdered =
-          events.collect { case x: Follow  => x }++
+          (events.collect { case x: Follow  => x }++
           events.collect { case x: UnFollow => x } ++
           events.collect { case x: Broadcast  => x } ++
           events.collect { case x: PrivateMessage  => x } ++
-          events.collect { case x: StatusUpdate  => x }
+          events.collect { case x: StatusUpdate  => x }).sortBy(_.seqId)
 
       log.info(s"Complete  Set of events for user $userId is ${eventsOrdered.mkString(",")}")
       if(events.isEmpty){
@@ -61,9 +61,12 @@ class UserInbound (
     case req : Follow         =>
 
      // log.info(s"user $userId has received a follower request from ${req.from}")
+
+      if(userId.get.contains("578")) println(s"following from user ${req.from} :[${ActiveUsersRegistry.findById(req.from)}]")
+
       followers += req.from -> getUserIfExists(req.from)
-      sendMsg(req.payload
-      )
+      //if(getUserIfExists(req.from).isDefined)
+        sendMsg(req.payload)
 
       //log.info(s"Follower list should now include ${req.from} in ${followers.keys.mkString("[",",","]")}")
 
@@ -85,7 +88,7 @@ class UserInbound (
       //log.info(s"Processing request $req")
      // log.info(s"User ${userId} received Status Update message from ${req.from} followers are ${followers.keys.mkString(",")}")
       if(userId.get.contains("365")) println(s"followers :[${followers.keys.mkString(",")} -> ${followers.values.mkString(",")}]")
-      println(ActiveUsersRegistry.findById(followers.keys.head))
+     // println(ActiveUsersRegistry.findById(followers.keys.head))
       followers.values.filter(_.isDefined).foreach( _.get ! StatusBroadcast(req.payload))
      // self ! Done
       //shutConnection
@@ -109,10 +112,6 @@ class UserInbound (
 
     case bCast : StatusBroadcast =>
 
-      val printer =  new PrintWriter(new File(s"/home/samuel/Desktop/files/events${userId.get}.log"))
-      printer.write(eventsStore.toList.mkString("\n"))
-      printer.flush()
-      printer.close()
       sendMsg(bCast.status)
 
 //    case Terminated(`self`) =>

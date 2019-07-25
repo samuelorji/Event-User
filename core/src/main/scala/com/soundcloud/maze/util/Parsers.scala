@@ -14,18 +14,18 @@ private[util] trait EventParserT {
         eventParts(1) match {
 
           case "F" =>
-            Follow(eventParts(2), eventParts(3),event)
+            Follow(eventParts(0).toInt,eventParts(2), eventParts(3),event)
           case "B" =>
-            Broadcast(event)
+            Broadcast(eventParts(0).toInt,event)
 
           case "U" =>
-            UnFollow(eventParts(2), eventParts(3),event)
+            UnFollow(eventParts(0).toInt,eventParts(2), eventParts(3),event)
 
           case "P" =>
-            PrivateMessage(eventParts(2), eventParts(3),event)
+            PrivateMessage(eventParts(0).toInt,eventParts(2), eventParts(3),event)
 
           case "S" =>
-            StatusUpdate(eventParts(2),event)
+            StatusUpdate(eventParts(0).toInt,eventParts(2),event)
 
 
           case _ => InvalidEvent
