@@ -18,7 +18,6 @@ object EventUserPipe {
 }
 private[outbound] class EventUserPipe extends Actor with ActorLogging {
 
-  private var events : ListBuffer[Event] = ListBuffer()
   import EventUserPipe._
   override def receive: Receive = {
 
@@ -32,43 +31,6 @@ private[outbound] class EventUserPipe extends Actor with ActorLogging {
         req.events.collect{
         case x : Event if x.isValid => x
       }
-
-      events.append(validEvents : _*)
-//      val validEventsOrdered =
-//          validEventsUnOrdered.collect{case x : Event if x.isInstanceOf[UnFollow] => x} ++
-//          validEventsUnOrdered.collect{case x : Event if x.isInstanceOf[PrivateMessage] => x} ++
-//          validEventsUnOrdered.collect{case x : Event if x.isInstanceOf[StatusUpdate] => x} ++
-//          validEventsUnOrdered.collect{case x : Event if x.isInstanceOf[Follow] => x} ++
-//          validEventsUnOrdered.collect{case x : Event if x.isInstanceOf[Broadcast] => x}
-//
-//
-//      validEventsOrdered.foreach{
-//        case f @ Follow(_,to,_)           =>
-//          getUserIfExists(to) match {
-//            case Some(user) => user ! f
-//            case None       =>
-//          }
-//        case u @ UnFollow(_,to,_)         =>
-//          getUserIfExists(to) match {
-//            case Some(user) => user ! u
-//            case None       =>
-//          }
-//
-//        case b @ Broadcast(_)             =>
-//          ActiveUsersRegistry.getAll.foreach( _ ! b)
-//
-//        case p @ PrivateMessage(_, to ,_) =>
-//          getUserIfExists(to) match {
-//            case Some(user) => user ! p
-//            case None       =>
-//          }
-//
-//        case s @ StatusUpdate(from, _)    =>
-//          getUserIfExists(from) match {
-//            case Some(user) => user ! s
-//            case None       =>
-//          }
-//      }
 
     val eventsMap = validEvents.foldLeft(Map[String,List[Event]]()){
       case (map1,event) =>
