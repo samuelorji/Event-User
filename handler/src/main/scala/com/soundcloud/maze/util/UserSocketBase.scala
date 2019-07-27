@@ -19,17 +19,18 @@ trait UserSocketBase extends Actor with ActorLogging {
     case Tcp.Received(data) =>
       val userStr = data.filter(_.toInt != 10).utf8String //removing '\n' from the data
       val user    = UserParser.parse(userStr.trim)
+      ActiveUsersRegistry.add(user.username, self)
 
-      ActiveUsersRegistry.findById(user.username) match {
-        case Some(_) =>
-
-        case None       =>
-
-
-          userId = Some(user.username)
-          log.info(s"user id ${userId.get} has registered")
-          ActiveUsersRegistry.add(user.username, self)
-      }
+//      ActiveUsersRegistry.findById(user.username) match {
+//        case Some(_) =>
+//
+//        case None       =>
+//
+//
+//          userId = Some(user.username)
+//          log.info(s"user id ${userId.get} has registered")
+//
+//      }registered
 
 
     case _ : Tcp.ConnectionClosed =>

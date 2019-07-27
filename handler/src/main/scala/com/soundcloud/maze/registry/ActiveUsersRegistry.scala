@@ -3,11 +3,15 @@ package com.soundcloud.maze.registry
 import java.util.concurrent.ConcurrentHashMap
 
 import scala.collection.JavaConverters._
-
 import akka.actor.ActorRef
+
+import scala.collection.mutable
 
 object ActiveUsersRegistry {
   private val usersActorMap = new ConcurrentHashMap[String/*User ID's*/,ActorRef/*InboundUserHandler*/]
+  val mutableMaps = mutable.Map[String, ActorRef]()
+
+  def addMutable(id : String, ref : ActorRef) = mutableMaps.put(id,ref)
 
 
 
