@@ -54,11 +54,11 @@ private[util] trait EventParserT {
  // def parseNew(event : String) : Option[Event] =
 }
 
-object UserParser extends UserParserT
-private[util] trait UserParserT {
-  def parse(msg: String): User = {
-    User(msg)
-  }
-}
+//object UserParser extends UserParserT
+//private[util] trait UserParserT {
+//  def parse(msg: String): User = {
+//    User(msg)
+//  }
+//}
 
 

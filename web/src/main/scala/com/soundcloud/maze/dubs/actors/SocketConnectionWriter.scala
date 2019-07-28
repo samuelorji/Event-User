@@ -10,14 +10,13 @@ class SocketConnectionWriter(socketWriter : PrintWriter) extends ActorLike {
   import SocketConnectionWriter._
   override protected def receive: PartialFunction[Any, Unit] = {
     case req : WriteToSocket =>
-      socketWriter.print(req.msg )
-      socketWriter.write("\r\n")
+      socketWriter.print(req.msg +"\n")
       socketWriter.flush() //to avoid buffer issues
 
   }
 
-  override protected def onShutdown(): Unit = {
+  override protected def shutdownActorLike(): Unit = {
     socketWriter.close() // To avoid resource wastage
-    super.onShutdown()
+    super.shutdownActorLike()
   }
 }

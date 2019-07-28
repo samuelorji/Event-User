@@ -1,18 +1,10 @@
 package com.soundcloud.maze.dubs.event
 
-import java.io.PrintWriter
+import com.soundcloud.maze.util.MazeUtil.parseInt
 
 object Events {
 
-  val EventQueueOrdering: Ordering[Event] = Ordering.by(_.seqId)
-
-  case object StartRouter
-
-  type UserId = Int
-
-  type SeqID = Int
-
-  type RawMessage = String
+  val eventOrdering = Ordering.fromLessThan[Event](_.seqId > _.seqId)
 
   sealed trait Event {
     val seqId: Int
@@ -24,30 +16,35 @@ object Events {
 
   case class Broadcast(seqId: Int, payload : String) extends Event
 
-  case class Private(seqId: Int,from: Int, to: Int,payload : String) extends Event
+  case class PrivateMessage(seqId: Int,from: Int, to: Int,payload : String) extends Event
 
   case class StatusUpdate(seqId: Int , from: Int,payload : String) extends Event
 
-  case class NewClientConnection(id: Int, outputStream: PrintWriter)
+  def parseEvent(msg : String) : Option[Event] = {
+    val entries = msg.split('|')
+    try {
+    entries(1) match{
+      case "F" =>
+        Some(Follow(entries(0).toInt, parseInt(entries(2)).get, parseInt(entries(3)).get, msg))
+      case "B" =>
+        Some(Broadcast(entries(0).toInt, msg))
 
-  object Event {
+      case "U" =>
+        Some(UnFollow(entries(0).toInt, parseInt(entries(2)).get, parseInt(entries(3)).get, msg))
 
-    def apply(msg: String): Option[Event] = msg.split('|') match {
-      case Array(AsInt(seq), "F", AsInt(from), AsInt(to)) => Some(Follow(seq, from, to,msg))
-      case Array(AsInt(seq), "U", AsInt(from), AsInt(to)) => Some(UnFollow(seq, from, to,msg))
-      case Array(AsInt(seq), "B") => Some(Broadcast(seq, msg))
-      case Array(AsInt(seq), "P", AsInt(from), AsInt(to)) => Some(Private(seq, from, to,msg))
-      case Array(AsInt(seq), "S", AsInt(from)) => Some(StatusUpdate(seq, from,msg))
-      case _ => None
+      case "P" =>
+        Some(PrivateMessage(entries(0).toInt,parseInt(entries(2)).get, parseInt(entries(3)).get, msg))
+
+      case "S" =>
+        Some(StatusUpdate(entries(0).toInt, parseInt(entries(2)).get, msg))
+      case _   => None
+
     }
-
-    object AsInt {
-      def unapply(str: String): Option[Int] = try {
-        Some(str.toInt)
-      } catch {
-        case _: NumberFormatException => None
-      }
+    } catch {
+      case _ : ArrayIndexOutOfBoundsException =>
+        None
+      case _ : NoSuchElementException => //in case a user is represented as a non Integer
+        None
     }
-
   }
 }

@@ -2,7 +2,6 @@ package com.soundcloud.maze.dubs.actors
 
 import java.util.concurrent.LinkedBlockingQueue
 
-
 object ActorLike{
   case object Shutdown
 }
@@ -14,15 +13,14 @@ trait ActorLike extends Runnable {
   import ActorLike._
 
   final def ! : Any => Unit = {
-    case Shutdown => onShutdown()
+    case Shutdown => shutdownActorLike()
     case req : Any =>
       mailbox.add(req)
   }
 
-  protected def onShutdown(): Unit = println(s"Shutting down actor")
+  protected def shutdownActorLike(): Unit = println(s"Shutting down actor")
 
   override def run(): Unit = {
-
     def dequeMailbox() : Unit =
       mailbox.take() match {
         case msg if receive.isDefinedAt(msg) =>

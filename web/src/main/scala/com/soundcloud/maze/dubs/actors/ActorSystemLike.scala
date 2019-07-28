@@ -2,13 +2,10 @@ package com.soundcloud.maze.dubs.actors
 
 import java.util.concurrent.Executors
 
-class ActorSystemLike {
+class ActorSystemLike /*More or less an executor Service*/{
 
   private val pool = Executors.newCachedThreadPool() // Work is mostly IO
 
-  def runTask (runnable: Runnable) ={
-    pool.execute(runnable)
-  }
   def execute(actorRef : ActorLike) : ActorLike = {
     pool.execute(actorRef)
     actorRef

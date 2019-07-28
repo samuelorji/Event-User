@@ -11,5 +11,5 @@ private[config] trait MazeConfigT extends ConfigT {
   val mazeEventPort  = config.getInt("maze.interface.web.events.port")
   val mazeUsersPort  = config.getInt("maze.interface.web.user.port")
 
-  val socketsTimeout = MazeUtil.parseFiniteDuration(config.getString("maze.web.sockets-timeout")).get
+ // val socketsTimeout = MazeUtil.parseFiniteDuration(config.getString("maze.web.sockets-timeout")).get
 }
