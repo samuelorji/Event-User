@@ -2,8 +2,6 @@ package com.soundcloud.maze.web
 
 import com.soundcloud.maze.core.config.{ActorLike, ActorSystemLike}
 import com.soundcloud.maze.core.util.MazeLogger
-import com.soundcloud.maze.web.handlers.ClientSocketHandler.AcceptConnections
-import com.soundcloud.maze.web.handlers.EventSocketHandler.StartSocket
 import com.soundcloud.maze.web.handlers.{ClientSocketHandler, EventSocketHandler}
 
 import scala.io.StdIn
@@ -18,8 +16,8 @@ object Server extends App with MazeLogger  {
   val clientHandler = system.execute(new ClientSocketHandler)
   val eventHandler  = system.execute(new EventSocketHandler)
 
-  clientHandler ! AcceptConnections
-  eventHandler  ! StartSocket
+  clientHandler ! ClientSocketHandler.AcceptConnections
+  eventHandler  ! EventSocketHandler.StartSocket
 
   StdIn.readLine()
 

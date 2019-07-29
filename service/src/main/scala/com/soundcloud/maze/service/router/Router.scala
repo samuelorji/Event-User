@@ -9,15 +9,11 @@ import com.soundcloud.maze.service.registry.{FollowerRegistry, UserRegistry}
 import com.soundcloud.maze.service.writer.SocketConnectionWriter
 
 object Router{
-  case class RegisterNewClient(userId : Int, client : PrintWriter)
+
 }
 class Router(implicit val system : ActorSystemLike ) extends ActorLike with MazeLogger {
-  import Router._
 
   override protected def receive: PartialFunction[Any, Unit] = {
-    case RegisterNewClient(id, out) =>
-      log.info(s"Registering New Client : {}",id)
-      UserRegistry.addUser(id,system.execute(SocketConnectionWriter(out)))
 
     case Follow(_, from, to,payload) =>
       FollowerRegistry.addFollow(to ,from)

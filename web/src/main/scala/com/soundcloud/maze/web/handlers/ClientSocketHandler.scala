@@ -6,8 +6,9 @@ import java.nio.charset.Charset
 
 import com.soundcloud.maze.core.action.users.User
 import com.soundcloud.maze.core.config.{ActorLike, ActorSystemLike, MazeConfig}
+import com.soundcloud.maze.service.client.Registerer
 import com.soundcloud.maze.service.router.Router
-import com.soundcloud.maze.service.router.Router.RegisterNewClient
+//import com.soundcloud.maze.service.router.Router.RegisterNewClient
 
 object ClientSocketHandler {
   case object AcceptConnections
@@ -18,8 +19,8 @@ class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  
 
   import ClientSocketHandler._
 
-  private val router = createRouter
-  def createRouter   = system.execute(new Router)
+  private val registerer = createClientRegisterer
+  def createClientRegisterer   = system.execute(new Registerer())
   override protected def receive: PartialFunction[Any, Unit] = {
     case AcceptConnections =>
       socket = new ServerSocket(MazeConfig.mazeUsersPort)
@@ -32,7 +33,7 @@ class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  
       val user = User(new BufferedReader(/*/* buffering characters so as to provide for the efficient reading of characters, lines and arrays. */*/
         new InputStreamReader(currentSocket.getInputStream))
         .readLine().toInt)
-      router ! RegisterNewClient(user.userId,streamToPrintWriter(currentSocket.getOutputStream))
+      registerer ! Registerer.RegisterNewClient(user.userId,streamToPrintWriter(currentSocket.getOutputStream))
       acceptConnection()
     }
       acceptConnection()
