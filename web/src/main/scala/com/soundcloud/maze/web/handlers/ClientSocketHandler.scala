@@ -18,7 +18,7 @@ class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  
   import ClientSocketHandler._
 
   private val registerer       = createClientRegisterer
-  def createClientRegisterer   = system.execute(new Registerer())
+  def createClientRegisterer   = system.execute(new Registerer)
 
   override protected def receive: PartialFunction[Any, Unit] = {
     case AcceptConnections =>

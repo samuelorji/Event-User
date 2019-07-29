@@ -21,9 +21,9 @@ object Server extends App with MazeLogger  {
 
   StdIn.readLine()
 
-  clientHandler ! ActorLike.Shutdown
-  eventHandler ! ActorLike.Shutdown
+//  clientHandler ! ActorLike.Shutdown
+//  eventHandler  ! ActorLike.Shutdown
 
-  system.shutdownSystem()
+ // system.shutdownSystem()
 
 }

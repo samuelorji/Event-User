@@ -6,8 +6,11 @@ import com.soundcloud.maze.core.config.ActorLike
 import scala.collection.mutable
 
 object UserRegistry {
-  private val users                        = mutable.Map[Int, ActorLike]()
-  def addUser(key : Int,value : ActorLike) = users.put(key,value)
+  private var users                        = Map[Int, ActorLike]()
+  def addUser(key : Int,value : ActorLike) = {
+    println("adding stuff" )
+    users += key -> value
+  }
   def findUser(user : Int)                 = users.get(user)
   def getAllUsers                          = users
 

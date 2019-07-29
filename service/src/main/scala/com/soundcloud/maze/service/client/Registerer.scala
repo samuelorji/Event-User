@@ -10,8 +10,12 @@ import com.soundcloud.maze.service.writer.SocketConnectionWriter
 object Registerer {
   case class RegisterNewClient(userId : Int, client : PrintWriter)
 }
+
+
 class Registerer(implicit system : ActorSystemLike) extends ActorLike with MazeLogger {
   import Registerer._
+
+
   override protected def receive: PartialFunction[Any, Unit] = {
     case RegisterNewClient(id, out) =>
       log.info(s"Registering New Client : {}",id)

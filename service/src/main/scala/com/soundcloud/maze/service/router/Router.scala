@@ -42,10 +42,10 @@ class Router(implicit val system : ActorSystemLike ) extends ActorLike with Maze
     log.info(s"Writing $msg to client [$id]")
   }
 
-  override protected def shutdownActorLike(): Unit = {
-   UserRegistry.getAllUsers.foreach(user => user._2 ! ActorLike.Shutdown)
-    super.shutdownActorLike()
-  }
+//  override protected def shutdownActorLike(): Unit = {
+//   UserRegistry.getAllUsers.foreach(user => user._2 ! ActorLike.Shutdown)
+//    super.shutdownActorLike()
+//  }
   implicit def `toActorLike`(writer : PrintWriter)  : ActorLike = {
     system.execute(SocketConnectionWriter(writer))
   }

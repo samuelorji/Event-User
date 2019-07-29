@@ -42,6 +42,6 @@ class EventSocketHandler(implicit  system : ActorSystemLike) extends ActorLike {
 
   override def shutdownActorLike() = {
     if(socket.isDefined) socket.get.close()
-    super.shutdownActorLike()
+    //super.shutdownActorLike()
   }
 }

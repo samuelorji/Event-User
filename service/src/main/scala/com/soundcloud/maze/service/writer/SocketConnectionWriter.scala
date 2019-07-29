@@ -19,6 +19,6 @@ class SocketConnectionWriter(socketWriter : PrintWriter) extends ActorLike {
 
   override protected def shutdownActorLike(): Unit = {
     socketWriter.close() // To avoid resource wastage
-    super.shutdownActorLike()
+    //super.shutdownActorLike()
   }
 }

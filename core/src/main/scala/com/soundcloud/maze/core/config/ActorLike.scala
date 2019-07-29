@@ -9,7 +9,8 @@ object ActorLike {
 trait ActorLike extends Runnable {
   protected def receive: PartialFunction[Any, Unit]
 
-  private[this] val mailbox = new LinkedBlockingQueue[Any] // to avoid race condition when adding to the queue
+  private[this] var mailbox              = new LinkedBlockingQueue[Any] // to avoid race condition when adding to the queue
+  //private object KILLACTOR
 
   import ActorLike._
 
@@ -19,7 +20,8 @@ trait ActorLike extends Runnable {
       mailbox.add(req)
   }
 
-  protected def shutdownActorLike(): Unit = println(s"Shutting down actor")
+  protected def shutdownActorLike(): Unit =
+    println(s"Shutting down actor")
 
   override def run(): Unit = {
     def dequeMailbox(): Unit =
