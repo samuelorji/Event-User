@@ -1,5 +1,6 @@
 package com.soundcloud.maze.service.registry
 
+import scala.collection.mutable.{HashMap,Set,MultiMap}
 import com.soundcloud.maze.core.config.ActorLike
 
 import scala.collection.mutable
@@ -14,7 +15,7 @@ object UserRegistry {
 
 object FollowerRegistry{
   //this class should not be accessed outside the package [registry] for proper encapsulation
-  private[registry]class UserToFollowers extends mutable.HashMap[Int, mutable.Set[Int]] with mutable.MultiMap[Int, Int]
+  private[registry]class UserToFollowers extends HashMap[Int, Set[Int]] with mutable.MultiMap[Int, Int]
 
   private  val followers : UserToFollowers = new UserToFollowers
   def addFollow(to : Int ,from : Int)      = followers.addBinding(to,from)
