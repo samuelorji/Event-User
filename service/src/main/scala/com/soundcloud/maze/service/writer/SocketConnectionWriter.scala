@@ -1,8 +1,9 @@
-package com.soundcloud.maze.service.writer
+package com.soundcloud.maze
+package service.writer
 
 import java.io.PrintWriter
 
-import com.soundcloud.maze.core.config.ActorLike
+import core.config.ActorLike
 
 object SocketConnectionWriter {
   case class WriteToSocket(msg : String)
@@ -19,6 +20,6 @@ class SocketConnectionWriter(socketWriter : PrintWriter) extends ActorLike {
 
   override protected def shutdownActorLike(): Unit = {
     socketWriter.close() // To avoid resource wastage
-    //super.shutdownActorLike()
+    super.shutdownActorLike()
   }
 }

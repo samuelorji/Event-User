@@ -1,34 +1,25 @@
-package com.soundcloud.maze.service.client
+package com.soundcloud.maze.
+package service.client
 
-import java.io.{File, PrintWriter}
+import java.io.PrintWriter
 
-import com.soundcloud.maze.core.config.ActorSystemLike
-import com.soundcloud.maze.service.TestServiceT
-import com.soundcloud.maze.service.client.Registerer.RegisterNewClient
-import com.soundcloud.maze.service.registry.UserRegistry
-import org.scalatest.{FlatSpec, Matchers}
-import org.scalatest.concurrent.Eventually
-import org.scalatest.concurrent.PatienceConfiguration.Timeout
-import org.scalatest.time.Span.convertSpanToDuration
+import service.TestServiceT
+import service.client.Registerer.RegisterNewClient
+import service.registry.UserRegistry
 
-import scala.concurrent.duration.FiniteDuration
+import org.scalatestplus.mockito.MockitoSugar.mock
 
-class RegistererSpec extends TestServiceT with Eventually  {
+class RegistererSpec extends TestServiceT {
 
-  "The Registerer Actor " should "process messages and register a new client " in {
-    //create the system here
+  "The Registerer Actor " should "eventually process messages and register a new client " in {
 
-    val x = system.execute(new Registerer)
-
-    val file            = new File("/Users/samuel/Desktop/file.txt")
-    val filePrintWriter = new PrintWriter(file)
-
-    x ! RegisterNewClient(1, filePrintWriter)
-
-    assert(UserRegistry.getAllUsers.get(1).isEmpty) //initially no client has been added
+    val testRegisterer  = system.execute(new Registerer)
+    val mockprintWriter = mock[PrintWriter]
+    testRegisterer ! RegisterNewClient(1, mockprintWriter)
 
     eventually {
-      UserRegistry.getAllUsers.get(1).isDefined //User gets added to the map eventually
+      assert(UserRegistry.getAllUsers.get(1).isDefined) //client gets added to the map eventually
+
     }
   }
 }

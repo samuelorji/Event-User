@@ -1,16 +1,14 @@
-package com.soundcloud.maze.service.registry
+package com.soundcloud.maze
+package service.registry
 
-import scala.collection.mutable.{HashMap,Set,MultiMap}
-import com.soundcloud.maze.core.config.ActorLike
+import core.config.ActorLike
 
 import scala.collection.mutable
+import scala.collection.mutable.{HashMap, Set}
 
 object UserRegistry {
   private var users                        = Map[Int, ActorLike]()
-  def addUser(key : Int,value : ActorLike) = {
-    println("adding stuff" )
-    users += key -> value
-  }
+  def addUser(key : Int,value : ActorLike) = users += key -> value
   def findUser(user : Int)                 = users.get(user)
   def getAllUsers                          = users
 

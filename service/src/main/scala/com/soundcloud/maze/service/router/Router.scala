@@ -1,17 +1,20 @@
-package com.soundcloud.maze.service.router
+package com.soundcloud.maze
+package service.router
 
 import java.io.PrintWriter
 
-import com.soundcloud.maze.core.action.events.Events._
-import com.soundcloud.maze.core.config.{ActorLike, ActorSystemLike}
-import com.soundcloud.maze.core.util.MazeLogger
-import com.soundcloud.maze.service.registry.{FollowerRegistry, UserRegistry}
-import com.soundcloud.maze.service.writer.SocketConnectionWriter
+import core.action.events.Events._
+import core.config.{ ActorLike, ActorSystemLike }
+import core.util.MazeLogger
+
+import service.registry.{FollowerRegistry, UserRegistry}
+import service.writer.SocketConnectionWriter
 
 object Router{
+  def getRouterInstance(implicit system : ActorSystemLike) = new Router
 
 }
-class Router(implicit val system : ActorSystemLike ) extends ActorLike with MazeLogger {
+private[service] class Router(implicit val system : ActorSystemLike ) extends ActorLike with MazeLogger {
 
   override protected def receive: PartialFunction[Any, Unit] = {
 
@@ -25,7 +28,6 @@ class Router(implicit val system : ActorSystemLike ) extends ActorLike with Maze
 
     case Broadcast(_, payload) =>
       UserRegistry.getAllUsers.foreach(user => writeToSocket(user._1,payload,user._2))
-
 
     case PrivateMessage(_, _, to,payload) =>
       UserRegistry.findUser(to).foreach(writeToSocket(to ,payload,_))
@@ -42,10 +44,10 @@ class Router(implicit val system : ActorSystemLike ) extends ActorLike with Maze
     log.info(s"Writing $msg to client [$id]")
   }
 
-//  override protected def shutdownActorLike(): Unit = {
-//   UserRegistry.getAllUsers.foreach(user => user._2 ! ActorLike.Shutdown)
-//    super.shutdownActorLike()
-//  }
+  override protected def shutdownActorLike(): Unit = {
+   UserRegistry.getAllUsers.foreach(user => user._2 ! ActorLike.Shutdown)
+    super.shutdownActorLike()
+  }
   implicit def `toActorLike`(writer : PrintWriter)  : ActorLike = {
     system.execute(SocketConnectionWriter(writer))
   }

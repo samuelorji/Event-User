@@ -1,19 +1,22 @@
-package com.soundcloud.maze.web.handlers
+package com.soundcloud.maze
+package web.handlers
 
 import java.net.ServerSocket
-
-import com.soundcloud.maze.core.action.events.Events
-import com.soundcloud.maze.core.config.{ActorLike, ActorSystemLike, MazeConfig}
-import com.soundcloud.maze.service.router.Router
 
 import scala.collection.mutable.PriorityQueue
 import scala.io.BufferedSource
 import scala.language.postfixOps
 
+import core.action.events.Events
+import core.config.{ ActorLike, ActorSystemLike, MazeConfig }
+
+import service.router.Router
+
 object EventSocketHandler {
   case object StartSocket
+  def getEventSocketHandlerInstance(implicit system : ActorSystemLike) = new EventSocketHandler()
 }
-class EventSocketHandler(implicit  system : ActorSystemLike) extends ActorLike {
+private[web] class EventSocketHandler(implicit  system : ActorSystemLike) extends ActorLike {
 
   implicit val ordering = Events.eventOrdering
   var socket : Option[ServerSocket] = None
@@ -21,7 +24,7 @@ class EventSocketHandler(implicit  system : ActorSystemLike) extends ActorLike {
   import EventSocketHandler._
 
   private val router = createRouter
-  def createRouter   = system.execute(new Router)
+  def createRouter   = system.execute(Router.getRouterInstance)
 
   override protected def receive: PartialFunction[Any, Unit] = {
     case StartSocket =>
@@ -42,6 +45,6 @@ class EventSocketHandler(implicit  system : ActorSystemLike) extends ActorLike {
 
   override def shutdownActorLike() = {
     if(socket.isDefined) socket.get.close()
-    //super.shutdownActorLike()
+    super.shutdownActorLike()
   }
 }

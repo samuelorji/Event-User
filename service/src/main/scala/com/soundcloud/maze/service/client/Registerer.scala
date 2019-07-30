@@ -1,20 +1,21 @@
-package com.soundcloud.maze.service.client
+package com.soundcloud.maze
+package service.client
 
 import java.io.PrintWriter
 
-import com.soundcloud.maze.core.config.{ActorLike, ActorSystemLike}
-import com.soundcloud.maze.core.util.MazeLogger
-import com.soundcloud.maze.service.registry.UserRegistry
-import com.soundcloud.maze.service.writer.SocketConnectionWriter
+import core.config.{ ActorLike, ActorSystemLike }
+import core.util.MazeLogger
+
+import service.registry.UserRegistry
+import service.writer.SocketConnectionWriter
 
 object Registerer {
   case class RegisterNewClient(userId : Int, client : PrintWriter)
+  def getRegistererInstance(implicit system : ActorSystemLike) = new Registerer()
 }
 
-
-class Registerer(implicit system : ActorSystemLike) extends ActorLike with MazeLogger {
+private[service] class Registerer(implicit system : ActorSystemLike) extends ActorLike with MazeLogger {
   import Registerer._
-
 
   override protected def receive: PartialFunction[Any, Unit] = {
     case RegisterNewClient(id, out) =>

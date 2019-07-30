@@ -8,8 +8,8 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.duration.FiniteDuration
 
-private[service] trait TestServiceT extends FlatSpec with Matchers{
+private[service] trait TestServiceT extends FlatSpec with Matchers with Eventually  {
 
-  implicit val system          = ActorSystemLike.getActorSystemLikeInstance
-  val timeout  = Timeout(convertSpanToDuration(FiniteDuration(1,"seconds")))
+  implicit val system  = ActorSystemLike.getActorSystemLikeInstance
+ implicit val timeout  = Timeout(convertSpanToDuration(FiniteDuration(10,"millis")))
 }

@@ -1,24 +1,27 @@
-package com.soundcloud.maze.web.handlers
+package com.soundcloud.maze
+package web.handlers
 
 import java.io._
 import java.net.ServerSocket
 import java.nio.charset.Charset
 
-import com.soundcloud.maze.core.action.users.User
-import com.soundcloud.maze.core.config.{ActorLike, ActorSystemLike, MazeConfig}
-import com.soundcloud.maze.service.client.Registerer
+import core.action.users.User
+import core.config.{ ActorLike, ActorSystemLike, MazeConfig }
+
+import service.client.Registerer
+import service.registry.UserRegistry
 
 object ClientSocketHandler {
   case object AcceptConnections
-
+  def getClientSocketHandlerInstance(implicit system : ActorSystemLike) = new ClientSocketHandler
 }
-class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  {
+private[web] class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  {
   var socket : Option[ServerSocket] = None
 
   import ClientSocketHandler._
 
   private val registerer       = createClientRegisterer
-  def createClientRegisterer   = system.execute(new Registerer)
+  def createClientRegisterer   = system.execute(Registerer.getRegistererInstance)
 
   override protected def receive: PartialFunction[Any, Unit] = {
     case AcceptConnections =>
@@ -36,10 +39,18 @@ class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  
       acceptConnection()
     }
       acceptConnection()
+
+    case ActorLike.Shutdown =>
+      shutdownActorLike()
   }
 
   def streamToPrintWriter(outputStream: OutputStream): PrintWriter =
     new PrintWriter(
       new BufferedWriter(/* buffering characters so as to provide for the efficient reading of characters, lines and arrays. */
         new OutputStreamWriter(outputStream, Charset.forName("UTF-8"))))
+
+  override protected def shutdownActorLike(): Unit = {
+    UserRegistry.getAllUsers.foreach(_._2 ! ActorLike.Shutdown)
+    super.shutdownActorLike()
+  }
 }

@@ -9,8 +9,8 @@ object ActorLike {
 trait ActorLike extends Runnable {
   protected def receive: PartialFunction[Any, Unit]
 
-  private[this] var mailbox              = new LinkedBlockingQueue[Any] // to avoid race condition when adding to the queue
-  //private object KILLACTOR
+  private[this] val mailbox = new LinkedBlockingQueue[Any] // to avoid race condition when adding to the queue
+
 
   import ActorLike._
 
