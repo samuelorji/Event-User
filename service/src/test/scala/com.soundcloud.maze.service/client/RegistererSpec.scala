@@ -1,4 +1,4 @@
-package com.soundcloud.maze.
+package com.soundcloud.maze
 package service.client
 
 import java.io.PrintWriter
