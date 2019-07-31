@@ -6,6 +6,8 @@ import core.config.ActorLike
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Set}
 
+/**
+  * Holds clients details as an Id and Its ActorLike (TCP connection)*/
 object UserRegistry {
   private var users                        = Map[Int, ActorLike]()
   def addUser(key : Int,value : ActorLike) = users += key -> value
@@ -14,6 +16,9 @@ object UserRegistry {
 
 }
 
+/**
+  * Holds follow details for each user , a multi map was used so as not to replace values when adding to the map
+  * Instead, a set is created for the extra value when an initial value was found*/
 object FollowerRegistry{
   //this class should not be accessed outside the package [registry] for proper encapsulation
   private[registry]class UserToFollowers extends HashMap[Int, Set[Int]] with mutable.MultiMap[Int, Int]

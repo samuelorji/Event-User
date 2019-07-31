@@ -2,6 +2,9 @@ package com.soundcloud.maze.core.config
 
 import java.util.concurrent.Executors
 
+/**
+  * Crude Implementation of an ActorSystem
+  * A ForkJoin Thread pool should be more efficient */
 object ActorSystemLike {
   def getActorSystemLikeInstance = new ActorSystemLike
 }

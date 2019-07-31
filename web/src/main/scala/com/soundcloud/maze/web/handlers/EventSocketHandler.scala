@@ -16,9 +16,11 @@ object EventSocketHandler {
   case object StartSocket
   def getEventSocketHandlerInstance(implicit system : ActorSystemLike) = new EventSocketHandler()
 }
+/**
+  * This Actor exposes a TCP connection for just a single Event Source to connect. Hence no need for a tail recursion as in the client Handler */
 private[web] class EventSocketHandler(implicit  system : ActorSystemLike) extends ActorLike {
 
-  implicit val ordering = Events.eventOrdering
+  implicit val ordering             = Events.eventOrdering
   var socket : Option[ServerSocket] = None
 
   import EventSocketHandler._
@@ -28,7 +30,7 @@ private[web] class EventSocketHandler(implicit  system : ActorSystemLike) extend
 
   override protected def receive: PartialFunction[Any, Unit] = {
     case StartSocket =>
-      socket                 = Some(new ServerSocket(MazeConfig.mazeEventPort)) //accept single event connection
+      socket                 = Some(createSocket) //accept single event connection
       var counter            = 1
       val eventPriorityQueue = PriorityQueue()// Ensures elements are properly queued by priority
       val events             = new BufferedSource(socket.get.accept().getInputStream).getLines()
@@ -42,6 +44,8 @@ private[web] class EventSocketHandler(implicit  system : ActorSystemLike) extend
         }
       }
   }
+
+  def createSocket = new ServerSocket(MazeConfig.mazeEventPort)
 
   override def shutdownActorLike() = {
     if(socket.isDefined) socket.get.close()

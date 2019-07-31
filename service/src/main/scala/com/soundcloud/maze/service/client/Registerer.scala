@@ -9,6 +9,8 @@ import core.util.MazeLogger
 import service.registry.UserRegistry
 import service.writer.SocketConnectionWriter
 
+/**
+  * Responsible solely for registering new Clients and adding it to the user Map defined in the registry Package*/
 object Registerer {
   case class RegisterNewClient(userId : Int, client : PrintWriter)
   def getRegistererInstance(implicit system : ActorSystemLike) = new Registerer()

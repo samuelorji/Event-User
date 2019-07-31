@@ -2,6 +2,10 @@ package com.soundcloud.maze.core.config
 
 import java.util.concurrent.LinkedBlockingQueue
 
+
+/**
+  * Crude Implementation of An Actor
+  * The mailbox must be unique to each individual actor and must not be accessible from outside the actor itself*/
 object ActorLike {
   case object Shutdown
 }

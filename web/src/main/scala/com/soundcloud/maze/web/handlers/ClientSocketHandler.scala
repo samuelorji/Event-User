@@ -15,6 +15,9 @@ object ClientSocketHandler {
   case object AcceptConnections
   def getClientSocketHandlerInstance(implicit system : ActorSystemLike) = new ClientSocketHandler
 }
+
+/**
+  * This Actor exposes a TCP connection for multiple users to connect to */
 private[web] class ClientSocketHandler(implicit system : ActorSystemLike) extends ActorLike  {
   var socket : Option[ServerSocket] = None
 
@@ -25,7 +28,7 @@ private[web] class ClientSocketHandler(implicit system : ActorSystemLike) extend
 
   override protected def receive: PartialFunction[Any, Unit] = {
     case AcceptConnections =>
-      socket = Some(new ServerSocket(MazeConfig.mazeUsersPort))
+      socket = Some(createSocket)
 
       //because we are accepting more than one connection on this socket
       //We tail recursively loop through for new incoming connections
@@ -43,6 +46,8 @@ private[web] class ClientSocketHandler(implicit system : ActorSystemLike) extend
     case ActorLike.Shutdown =>
       shutdownActorLike()
   }
+
+  def createSocket = new ServerSocket(MazeConfig.mazeUsersPort)
 
   def streamToPrintWriter(outputStream: OutputStream): PrintWriter =
     new PrintWriter(

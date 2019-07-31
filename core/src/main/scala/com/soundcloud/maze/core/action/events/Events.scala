@@ -2,6 +2,8 @@ package com.soundcloud.maze.core.action.events
 
 import com.soundcloud.maze.core.util.MazeUtil.parseInt
 
+/**
+  * Contains all events parsers, event types */
 object Events {
 
   val eventOrdering = Ordering.fromLessThan[Event](_.seqId > _.seqId)

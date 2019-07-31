@@ -14,6 +14,8 @@ object Router{
   def getRouterInstance(implicit system : ActorSystemLike) = new Router
 
 }
+/**
+  * This Actor is solely responsible for routing incoming events to the relevant Client connections  */
 private[service] class Router(implicit val system : ActorSystemLike ) extends ActorLike with MazeLogger {
 
   override protected def receive: PartialFunction[Any, Unit] = {

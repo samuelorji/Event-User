@@ -4,6 +4,8 @@ import com.soundcloud.maze.core.util.ConfigT
 
 object MazeConfig extends MazeConfigT
 
+/**
+  * Contains configurations that are shared across The whole project */
 private[config] trait MazeConfigT extends ConfigT {
 
   val mazeEventsHost = config.getString("maze.interface.web.events.host")
