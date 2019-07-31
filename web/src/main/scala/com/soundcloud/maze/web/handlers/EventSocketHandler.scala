@@ -31,10 +31,11 @@ private[web] class EventSocketHandler(implicit  system : ActorSystemLike) extend
   override protected def receive: PartialFunction[Any, Unit] = {
     case StartSocket =>
       socket                 = Some(createSocket) //accept single event connection
-      var counter            = 1
       val eventPriorityQueue = PriorityQueue()// Ensures elements are properly queued by priority
-      val events             = new BufferedSource(socket.get.accept().getInputStream).getLines()
+      var counter            = 1
       val hasNext = () =>     !eventPriorityQueue.isEmpty && eventPriorityQueue.head.seqId == counter
+      val events             = new BufferedSource(socket.get.accept().getInputStream).getLines()
+
 
       events.flatMap(Events.parseEvent).foreach { event =>
         eventPriorityQueue enqueue  event
